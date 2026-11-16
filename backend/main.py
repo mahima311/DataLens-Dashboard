@@ -19,6 +19,7 @@ app = FastAPI(
     version="1.3.0",
 )
 
+
 # ==========================================
 # CORS CONFIGURATION
 # ==========================================
@@ -31,6 +32,7 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
         "https://data-lens-dashboard-j4ufzwa0z-mahima-mishra-s-projects.vercel.app",
+        "https://data-lens-dashboard.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -66,8 +68,6 @@ def home():
 # ==========================================
 
 def clean_value(value):
-    """Convert pandas, NumPy and date values into JSON-safe values."""
-
     if value is None:
         return None
 
@@ -218,7 +218,6 @@ def get_chart_data(df: pd.DataFrame) -> dict:
             histogram = []
 
             for interval, count in counts.items():
-
                 histogram.append({
                     "label": str(interval),
                     "count": int(count),
@@ -253,12 +252,10 @@ def get_chart_data(df: pd.DataFrame) -> dict:
         if pd.api.types.is_datetime64_any_dtype(df[column]):
 
             date_column = column
-
             converted_dates = pd.to_datetime(
                 df[column],
                 errors="coerce",
             )
-
             break
 
         if not pd.api.types.is_numeric_dtype(df[column]):
@@ -271,7 +268,6 @@ def get_chart_data(df: pd.DataFrame) -> dict:
             valid_ratio = converted.notna().mean()
 
             if valid_ratio >= 0.7:
-
                 date_column = column
                 converted_dates = converted
                 break
@@ -381,7 +377,6 @@ def analyze_dataset_frame(df: pd.DataFrame) -> dict:
         if column_type in ("categorical", "boolean"):
 
             counts = non_null.astype(str).value_counts()
-
             total_non_null = int(counts.sum())
 
             top_categories = [
@@ -554,11 +549,9 @@ def analyze_dataset_frame(df: pd.DataFrame) -> dict:
 async def analyze_dataset(file: UploadFile = File(...)):
 
     filename = file.filename or ""
-
     extension = Path(filename).suffix.lower()
 
     if extension not in SUPPORTED_EXTENSIONS:
-
         raise HTTPException(
             status_code=400,
             detail="Supported file types are CSV, XLSX, and XLS.",
@@ -567,14 +560,12 @@ async def analyze_dataset(file: UploadFile = File(...)):
     content = await file.read()
 
     if not content:
-
         raise HTTPException(
             status_code=400,
             detail="The uploaded file is empty.",
         )
 
     if len(content) > MAX_FILE_SIZE:
-
         raise HTTPException(
             status_code=413,
             detail="File size must be 10 MB or less.",
@@ -583,7 +574,6 @@ async def analyze_dataset(file: UploadFile = File(...)):
     df = load_dataframe(filename, content)
 
     if df.empty:
-
         raise HTTPException(
             status_code=400,
             detail="The file has no data rows to analyze.",
@@ -592,7 +582,6 @@ async def analyze_dataset(file: UploadFile = File(...)):
     df.columns = [str(column) for column in df.columns]
 
     if df.columns.duplicated().any():
-
         raise HTTPException(
             status_code=400,
             detail=(
