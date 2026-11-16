@@ -3,15 +3,10 @@ from io import BytesIO
 from pathlib import Path
 import math
 
-
 import pandas as pd
-
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
-
 
 
 # ==========================================
@@ -24,6 +19,10 @@ app = FastAPI(
     version="1.3.0",
 )
 
+# ==========================================
+# CORS CONFIGURATION
+# ==========================================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -31,6 +30,7 @@ app.add_middleware(
         "http://localhost:5174",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
+        "https://data-lens-dashboard-j4ufzwa0z-mahima-mishra-s-projects.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -59,9 +59,6 @@ def home():
         "status": "running",
         "docs": "/docs",
     }
-
-
-
 
 
 # ==========================================
@@ -610,6 +607,3 @@ async def analyze_dataset(file: UploadFile = File(...)):
     result["file_size"] = len(content)
 
     return result
-
-
-
