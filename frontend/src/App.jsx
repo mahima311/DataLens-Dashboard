@@ -11,7 +11,6 @@ import Upload from "./pages/Upload";
 import Datasets from "./pages/Datasets";
 import Insights from "./pages/Insights";
 import History from "./pages/History";
-import Reports from "./pages/Reports";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 
@@ -59,11 +58,6 @@ export default function App() {
       <Route
         path="/history"
         element={<PrivatePage><History /></PrivatePage>}
-      />
-
-      <Route
-        path="/reports"
-        element={<PrivatePage><Reports /></PrivatePage>}
       />
 
       <Route
